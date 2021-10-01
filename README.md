@@ -37,16 +37,18 @@ A collection of Go tutorials for myself.
     goarch: amd64
     pkg: go-tutorial/cmd/litedb
     cpu: Intel(R) Core(TM) i5-7300HQ CPU @ 2.50GHz
-    BenchmarkWriteSQLite-4                               127           8991566 ns/op
-    BenchmarkReadSQLite-4                               8874            134492 ns/op
-    BenchmarkWriteShareMemSQLite-4                       159           7684462 ns/op
-    BenchmarkReadShareMemSQLite-4                       7905            136736 ns/op
-    BenchmarkWriteShareMemSQLiteGoroutine-4           109519             10687 ns/op
-    BenchmarkReadShareMemSQLiteGoroutine-4            187932              7563 ns/op
-    BenchmarkWriteMemSQLite-4                         123442              8787 ns/op
-    BenchmarkReadMemSQLite-4                            3657            528068 ns/op
-    BenchmarkWriteRQLite-4                               169           7196651 ns/op
-    BenchmarkReadRQLite-4                                174           6446760 ns/op
+    BenchmarkWriteSQLite-4                               151           7949415 ns/op
+    BenchmarkReadSQLite-4                               8212            137751 ns/op
+    BenchmarkWriteShareMemSQLite-4                       135           7731625 ns/op
+    BenchmarkReadShareMemSQLite-4                       8472            137281 ns/op
+    BenchmarkWriteShareMemSQLiteGoroutine-4           133040              8507 ns/op
+    BenchmarkReadShareMemSQLiteGoroutine-4           1000000              8075 ns/op
+    BenchmarkWriteMemSQLite-4                         141237              8991 ns/op
+    BenchmarkReadMemSQLite-4                            3776            593021 ns/op
+    BenchmarkWriteRQLite-4                               151           6873940 ns/op
+    BenchmarkReadRQLite-4                                193           6421101 ns/op
+    BenchmarkWriteRQLiteGoroutine-4                   774082            131756 ns/op
+    BenchmarkReadRQLiteGoroutine-4                    799147             58185 ns/op
     PASS
     ok      go-tutorial/cmd/litedb  17.752s
     ```

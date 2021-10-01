@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"testing"
+
+	"github.com/rqlite/gorqlite"
 )
 
 func BenchmarkWriteSQLite(b *testing.B) {
@@ -197,25 +199,25 @@ func BenchmarkReadRQLite(b *testing.B) {
 	}
 }
 
-// func BenchmarkWriteRQLiteGoroutine(b *testing.B) {
-// 	conn, err := gorqlite.Open(RQLITE_URL)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+func BenchmarkWriteRQLiteGoroutine(b *testing.B) {
+	conn, err := gorqlite.Open(RQLITE_URL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	conn.SetConsistencyLevel("strong")
-// 	for i := 0; i < b.N; i++ {
-// 		go conn.WriteOne("INSERT INTO foo (name) values ('bar')")
-// 	}
-// }
-// func BenchmarkReadRQLiteGoroutine(b *testing.B) {
-// 	conn, err := gorqlite.Open(RQLITE_URL)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	conn.SetConsistencyLevel("strong")
+	for i := 0; i < b.N; i++ {
+		go conn.WriteOne("INSERT INTO foo (name) values ('bar')")
+	}
+}
+func BenchmarkReadRQLiteGoroutine(b *testing.B) {
+	conn, err := gorqlite.Open(RQLITE_URL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	conn.SetConsistencyLevel("strong")
-// 	for i := 0; i < b.N; i++ {
-// 		go conn.QueryOne("SELECT name FROM foo WHERE id=1")
-// 	}
-// }
+	conn.SetConsistencyLevel("strong")
+	for i := 0; i < b.N; i++ {
+		go conn.QueryOne("SELECT name FROM foo WHERE id=1")
+	}
+}
