@@ -9,69 +9,105 @@ import (
 	"github.com/allegro/bigcache"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/dgraph-io/ristretto"
+	"github.com/ducminhgd/gao/generator"
 	"github.com/go-redis/redis"
 	"github.com/patrickmn/go-cache"
 )
 
 var ctx = context.Background()
 
-var MemcacheClient *memcache.Client = memcache.New("10.0.0.1:11211")
+var MemcacheClient *memcache.Client = memcache.New("127.0.0.1:11211")
 var rdb = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379",
+	Addr:     "127.0.0.1:6379",
 	Password: "", // no password set
 	DB:       0,  // use default DB
 })
 
 var kdb = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6380",
+	Addr:     "127.0.0.1:6380",
+	Password: "", // no password set
+	DB:       0,  // use default DB
+})
+
+var dfdb = redis.NewClient(&redis.Options{
+	Addr:     "127.0.0.1:6381",
 	Password: "", // no password set
 	DB:       0,  // use default DB
 })
 
 func WriteRedis() {
-	err := rdb.Set("key", "value", 60*time.Second).Err()
+	uuid := generator.NewUUID()
+	err := rdb.Set(uuid, uuid, 60*time.Second).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func ReadRedis() {
-	_, err := rdb.Get("key").Result()
+	uuid := generator.NewUUID()
+	rdb.Set(uuid, uuid, 60*time.Second).Err()
+	_, err := rdb.Get(uuid).Result()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func WriteKeyDb() {
-	err := kdb.Set("key", "value", 60*time.Second).Err()
+	uuid := generator.NewUUID()
+	err := kdb.Set(uuid, uuid, 60*time.Second).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func ReadKeyDb() {
-	_, err := kdb.Get("key").Result()
+	uuid := generator.NewUUID()
+	kdb.Set(uuid, uuid, 60*time.Second).Err()
+	_, err := kdb.Get(uuid).Result()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func WriteDragonFlyDB() {
+	uuid := generator.NewUUID()
+	err := dfdb.Set(uuid, uuid, 60*time.Second).Err()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func ReadDragonFlyDB() {
+	uuid := generator.NewUUID()
+	dfdb.Set(uuid, uuid, 60*time.Second).Err()
+	_, err := dfdb.Get(uuid).Result()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func WriteMemcache() {
-	MemcacheClient.Set(&memcache.Item{Key: "my-key", Value: []byte("my value"), Expiration: 600})
+	uuid := generator.NewUUID()
+	MemcacheClient.Set(&memcache.Item{Key: uuid, Value: []byte(uuid), Expiration: 600})
 }
 
 func ReadMemcache() {
-	MemcacheClient.Get("my-key")
+	uuid := generator.NewUUID()
+	MemcacheClient.Set(&memcache.Item{Key: uuid, Value: []byte(uuid), Expiration: 600})
+	MemcacheClient.Get(uuid)
 }
 
 func WriteGoCache() {
+	uuid := generator.NewUUID()
 	c := cache.New(5*time.Minute, 10*time.Minute)
-	c.Set("foo", "bar", cache.DefaultExpiration)
+	c.Set(uuid, uuid, cache.DefaultExpiration)
 }
 
 func ReadGoCache() {
+	uuid := generator.NewUUID()
 	c := cache.New(5*time.Minute, 10*time.Minute)
-	foo, found := c.Get("foo")
+	c.Set(uuid, uuid, cache.DefaultExpiration)
+	foo, found := c.Get(uuid)
 	if found {
 		fmt.Println(foo)
 	}
@@ -87,8 +123,9 @@ func WriteRistretto() {
 		panic(err)
 	}
 
+	uuid := generator.NewUUID()
 	// set a value with a cost of 1
-	cache.Set("key", "value", 1)
+	cache.Set(uuid, uuid, 1)
 }
 
 func ReadRistretto() {

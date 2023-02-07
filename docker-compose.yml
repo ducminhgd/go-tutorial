@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   redis:
-    image: 'bitnami/redis:latest'
+    image: 'redis:latest'
     environment:
       - REDIS_REPLICATION_MODE=master
       - ALLOW_EMPTY_PASSWORD=yes
@@ -44,6 +44,19 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+  dragonfly: # the new redis
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    ulimits:
+      memlock: -1
+    command:
+      - "--save_schedule=*:*" # save for every 1 minute
+      - "--dir=/data"
+      - "--dbfilename=dump.rdb"
+    ports:
+      - '6381:6379'
+    volumes:
+      - "./dragonfly_data:/data"
+    restart: unless-stopped
 
 networks:
   go-tutorial:

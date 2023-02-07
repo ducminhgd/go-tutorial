@@ -2,36 +2,31 @@ package main
 
 import (
 	"testing"
-	"time"
-
-	"github.com/allegro/bigcache"
-	"github.com/dgraph-io/ristretto"
-	"github.com/patrickmn/go-cache"
 )
 
-func BenchmarkWriteMemcache(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		WriteMemcache()
-	}
-}
+// func BenchmarkWriteMemcache(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		WriteMemcache()
+// 	}
+// }
 
-func BenchmarkReadMemcache(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		ReadMemcache()
-	}
-}
+// func BenchmarkReadMemcache(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		ReadMemcache()
+// 	}
+// }
 
-func BenchmarkWriteMemcacheGoroutine(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		go WriteMemcache()
-	}
-}
+// func BenchmarkWriteMemcacheGoroutine(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		go WriteMemcache()
+// 	}
+// }
 
-func BenchmarkReadMemcacheGoroutine(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		go ReadMemcache()
-	}
-}
+// func BenchmarkReadMemcacheGoroutine(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		go ReadMemcache()
+// 	}
+// }
 
 func BenchmarkWriteRedis(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -57,17 +52,17 @@ func BenchmarkReadRedis(b *testing.B) {
 // 	}
 // }
 
-func BenchmarkWriteKeyDb(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		WriteKeyDb()
-	}
-}
+// func BenchmarkWriteKeyDb(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		WriteKeyDb()
+// 	}
+// }
 
-func BenchmarkReadKeyDb(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		ReadKeyDb()
-	}
-}
+// func BenchmarkReadKeyDb(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		ReadKeyDb()
+// 	}
+// }
 
 // func BenchmarkWriteKeyDbGoroutine(b *testing.B) {
 // 	for i := 0; i < b.N; i++ {
@@ -81,59 +76,83 @@ func BenchmarkReadKeyDb(b *testing.B) {
 // 	}
 // }
 
-func BenchmarkWriteGoCache(b *testing.B) {
+func BenchmarkWriteDragonFlyDB(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		WriteGoCache()
+		WriteDragonFlyDB()
 	}
 }
 
-func BenchmarkReadGoCache(b *testing.B) {
-	c := cache.New(5*time.Minute, 10*time.Minute)
-	c.Set("foo", "bar", cache.DefaultExpiration)
+func BenchmarkReadDragonFlyDB(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		c.Get("foo")
+		ReadDragonFlyDB()
 	}
 }
 
-func BenchmarkWriteGoCacheGoroutine(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		go WriteGoCache()
-	}
-}
+// func BenchmarkWriteDragonFlyDBGoroutine(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		go WriteDragonFlyDB()
+// 	}
+// }
 
-func BenchmarkReadGoCacheGoRoutine(b *testing.B) {
-	c := cache.New(5*time.Minute, 10*time.Minute)
-	c.Set("foo", "bar", cache.DefaultExpiration)
-	for i := 0; i < b.N; i++ {
-		go c.Get("foo")
-	}
-}
+// func BenchmarkReadDragonFlyDBGoroutine(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		go ReadDragonFlyDB()
+// 	}
+// }
 
-func BenchmarkWriteRistretto(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		WriteRistretto()
-	}
-}
+// func BenchmarkWriteGoCache(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		WriteGoCache()
+// 	}
+// }
 
-func BenchmarkReadRistretto(b *testing.B) {
-	cache, err := ristretto.NewCache(&ristretto.Config{
-		NumCounters: 1e7,     // number of keys to track frequency of (10M).
-		MaxCost:     1 << 30, // maximum cost of cache (1GB).
-		BufferItems: 64,      // number of keys per Get buffer.
-	})
-	if err != nil {
-		panic(err)
-	}
+// func BenchmarkReadGoCache(b *testing.B) {
+// 	c := cache.New(5*time.Minute, 10*time.Minute)
+// 	c.Set("foo", "bar", cache.DefaultExpiration)
+// 	for i := 0; i < b.N; i++ {
+// 		c.Get("foo")
+// 	}
+// }
 
-	// set a value with a cost of 1
-	cache.Set("key", "value", 1)
+// func BenchmarkWriteGoCacheGoroutine(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		go WriteGoCache()
+// 	}
+// }
 
-	// wait for value to pass through buffers
-	cache.Wait()
-	for i := 0; i < b.N; i++ {
-		cache.Get("key")
-	}
-}
+// func BenchmarkReadGoCacheGoRoutine(b *testing.B) {
+// 	c := cache.New(5*time.Minute, 10*time.Minute)
+// 	c.Set("foo", "bar", cache.DefaultExpiration)
+// 	for i := 0; i < b.N; i++ {
+// 		go c.Get("foo")
+// 	}
+// }
+
+// func BenchmarkWriteRistretto(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		WriteRistretto()
+// 	}
+// }
+
+// func BenchmarkReadRistretto(b *testing.B) {
+// 	cache, err := ristretto.NewCache(&ristretto.Config{
+// 		NumCounters: 1e7,     // number of keys to track frequency of (10M).
+// 		MaxCost:     1 << 30, // maximum cost of cache (1GB).
+// 		BufferItems: 64,      // number of keys per Get buffer.
+// 	})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	// set a value with a cost of 1
+// 	cache.Set("key", "value", 1)
+
+// 	// wait for value to pass through buffers
+// 	cache.Wait()
+// 	for i := 0; i < b.N; i++ {
+// 		cache.Get("key")
+// 	}
+// }
 
 // func BenchmarkWriteRistrettoGoroutine(b *testing.B) {
 // 	for i := 0; i < b.N; i++ {
@@ -161,19 +180,19 @@ func BenchmarkReadRistretto(b *testing.B) {
 // 	}
 // }
 
-func BenchmarkWriteBigcache(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		WriteBigcache()
-	}
-}
+// func BenchmarkWriteBigcache(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		WriteBigcache()
+// 	}
+// }
 
-func BenchmarkReadBigcache(b *testing.B) {
-	cache, _ := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
-	cache.Set("my-unique-key", []byte("value"))
-	for i := 0; i < b.N; i++ {
-		cache.Get("my-unique-key")
-	}
-}
+// func BenchmarkReadBigcache(b *testing.B) {
+// 	cache, _ := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+// 	cache.Set("my-unique-key", []byte("value"))
+// 	for i := 0; i < b.N; i++ {
+// 		cache.Get("my-unique-key")
+// 	}
+// }
 
 // func BenchmarkWriteBigcacheGoroutine(b *testing.B) {
 // 	for i := 0; i < b.N; i++ {
